@@ -4,7 +4,7 @@ import './App.css'
 //components
 import { QuestionCard } from './components/QuestionCard'
 
-type AnswerObject = {
+export type AnswerObject = {
   question: string;
   answer: string;
   correct: boolean;
@@ -40,11 +40,30 @@ setLoading(false);
 }
 
 const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
-
-}
+if(!gameOver){
+  ///Users answer
+  const answer = e.currentTarget.value
+  ///check if that is correct answer
+  const correct = questions[number].correct_answer === answer;
+  ///add a point if correct
+  if(correct) setScore(prev => prev + 1);
+  ///save answer in the array for user answers
+  const answerObject = {
+    question: questions[number].question,
+    answer,
+    correct,
+    correctAnswer: questions[number].correct_answer,
+  };
+  setUserAnswers(prev => [...prev, answerObject])
+}}
 
 const nextQuestion = () => {
-console.log(number)
+const nextQuestion = number + 1;
+if(nextQuestion === TOTAL_QUESTIONS){
+  setGameOver(true)
+} else {
+  setNumber(nextQuestion)
+}
 }
 
 const imgLink: string = "https://images.unsplash.com/photo-1619897917857-f80c6adcf760?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80"
@@ -55,7 +74,7 @@ return (
 {gameOver || userAnswers.length === TOTAL_QUESTIONS ?
 <button className='start' onClick={startTrivia}>Start</button> : null}
 
-{!gameOver && <p className="score">Score:</p>}
+{!gameOver && <p className="score">Score: {score}</p>}
 
 {loading && <p className="loading">Loading Questions ...</p>}
 
